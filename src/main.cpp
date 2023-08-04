@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #ifdef ESP32
   #include <WiFi.h>
   #include <AsyncTCP.h>
@@ -11,7 +12,6 @@
 #include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);
-
 const char* ssid = "JustDiehlWithIt";
 const char* password = "DiehlWithIt09";
 
@@ -35,19 +35,18 @@ const char* PARAM_timer3value = "timer3value";
 const char* PARAM_timer4value = "timer4value";
 const char* PARAM_timer5value = "timer5value";
 
-String _feste_Timer_Name[10] = {"Nudeln 7min", "Kartoffeln 14min", "Steak medium", "Mittag 1h", "Mittag 30min", "-", "-", "-", "-", "-"};
-unsigned long _feste_Timer[10] = {420000, 840000, 90000, 3600000, 1800000, 0, 0, 0, 0, 0};
-const char* festeFileName[10] = {"/festerTimerName1", "/festerTimerName2", "/festerTimerName3", "/festerTimerName4", "/festerTimerName5", "/festerTimerName6", "/festerTimerName7", "/festerTimerName8", "/festerTimerName9", "/festerTimerName10"};
-const char* festeFile[10] = {"/festerTimer1", "/festerTimer2", "/festerTimer3", "/festerTimer4", "/festerTimer5", "/festerTimer6", "/festerTimer7", "/festerTimer8", "/festerTimer9", "/festerTimer10"};
+
+String feste_Timer_Name[10] = {"Nudeln 7min", "Kartoffeln 14min", "Steak medium", "Mittag 1h", "Mittag 30min", "-", "-", "-", "-", "-"};
+unsigned long feste_Timer[10] = {420000, 840000, 90000, 3600000, 1800000, 0, 0, 0, 0, 0};
+
 const char* PARAM_CURRENTTIME = "currentTime";
-String* Pointerfeste_Timer_Name = nullptr;
-unsigned long *Pointerfeste_Timer = nullptr;
-unsigned long *pointer_timer_1 = nullptr;
-unsigned long *pointer_timer_2 = nullptr;
-unsigned long *pointer_timer_3 = nullptr;
-unsigned long *pointer_timer_4 = nullptr;
-unsigned long *pointer_timer_5 = nullptr;
-unsigned long *pointer_timer = nullptr;
+unsigned long timer_1 = 0;
+unsigned long timer_2 = 0;
+unsigned long timer_3 = 0;
+unsigned long timer_4 = 0;
+unsigned long timer_5 = 0;
+unsigned long timer[5];
+
 String Date;
 int D =23;
 int M =19;
@@ -57,34 +56,30 @@ int h =12;
 int m =23;
 int s =06;
 
-
 unsigned long _timer[5] = {0, 0, 0, 0, 0};
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
-<html><body style="background-color: lightblue;">
+<html><body style="background-color: lightgreen;">
   <head>
+    <meta http-equiv="refresh" content="10">
     <script>
     function submitMessage() {
       alert("Saved value to ESP SPIFFS");
       setTimeout(function(){ document.location.reload(false); }, 500);   
     }
-    function submitaddMessage() {
-      alert("%timer3value%");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
     function startMessage() {
-      alert("Timer started");
+      alert("new Timer started");
       setTimeout(function(){ document.location.reload(false); }, 500);   
     }
     </script>
-    <title>FUCK THIS SHIT</title>
+    <title>enterProjectTitel</title>
   </head>
   <body>
     <form target= "hidden-form">
       <h1>Current Time: %currentTime%</h1>
       <h1>Date: %currentDate%</h1>
-      <h2>Team Biscuit </h2>
+      <h2>enterTeamName </h2>
     </form>
     <th>Timer</th>
     <th>TimerValue</th>
@@ -92,61 +87,49 @@ const char index_html[] PROGMEM = R"rawliteral(
     <th>Actions</th>
     <br>
     <br>
-    <form acton="/start1" target= "hidden-form">
+    <form target= "hidden-form">
       Timer1: %timer1value% seconds / %timer1left% seconds
-      <input type="submit" value="start" onclick="startMessage()">
     </form>
     <br>
-    <form acton="/start2" target= "hidden-form">
+    <form target= "hidden-form">
       Timer2: %timer2value% seconds / %timer2left% seconds
-      <input type="submit" value="start" onclick="startMessage()">
     </form>
     <br>
-    <form acton="/start3" target= "hidden-form">
+    <form target= "hidden-form">
       Timer3: %timer3value% seconds / %timer3left% seconds
-      <input type="submit" value="start" onclick="startMessage()">
     </form>
     <br>
-    <form acton="/start4" target= "hidden-form">
+    <form target= "hidden-form">
       Timer4: %timer4value% seconds / %timer4left% seconds
-      <input type="submit" value="start" onclick="startMessage()">
     </form>
     <br>
-    <form acton="/start5" target= "hidden-form">
+    <form target= "hidden-form">
       Timer5: %timer5value% seconds / %timer5left% seconds
-      <input type="submit" value="start" onclick="startMessage()">
     </form>
     <br>
 
     <form action="/get" target="hidden-form">
       festerTimerName6 (current value %festerTimerName6%): <input type="text" name="festerTimerName6">
-      festerTimer6 (current value %festerTimer6%): <input type="number " name="festerTimer6">
+      festerTimer6 (current value %festerTimer6% ms): <input type="number " name="festerTimer6">
       <br>
       festerTimerName7 (current value %festerTimerName7%): <input type="text" name="festerTimerName7">
-      festerTimer7 (current value %festerTimer7%): <input type="number " name="festerTimer7">
+      festerTimer7 (current value %festerTimer7% ms): <input type="number " name="festerTimer7">
       <br>
       festerTimerName8 (current value %festerTimerName8%): <input type="text" name="festerTimerName8">
-      festerTimer8 (current value %festerTimer8%): <input type="number " name="festerTimer8">
+      festerTimer8 (current value %festerTimer8% ms): <input type="number " name="festerTimer8">
       <br>
       festerTimerName9 (current value %festerTimerName9%): <input type="text" name="festerTimerName9">
-      festerTimer9 (current value %festerTimer9%): <input type="number " name="festerTimer9">
+      festerTimer9 (current value %festerTimer9% ms): <input type="number " name="festerTimer9">
       <br>
       festerTimerName10 (current value %festerTimerName10%): <input type="text" name="festerTimerName10">
-      festerTimer10 (current value %festerTimer10%): <input type="number " name="festerTimer10">
+      festerTimer10 (current value %festerTimer10% ms): <input type="number " name="festerTimer10">
       <input type="submit" value="Submit" onclick="submitMessage()">
     </form>
     <br>
     <br>
 
-  <form action="/add" target="hidden-form">
-    <label>Timer:</label>
-    <select name="timerSelect">
-    <option value="/timer1value.txt">Timer 1</option>
-    <option value="/timer2value.txt">Timer 2</option>
-    <option value="/timer3value.txt">Timer 3</option>
-    <option value="/timer4value.txt">Timer 4</option>
-    <option value="/timer5value.txt">Timer 5</option>
-    </select>
+  <form action="/start" target="hidden-form">
+    Timer %currentTimer%:
     <label>festeTimerName:</label>
     <select name="festeTimerNameSelect">
     <option value="%festerTimer1%">%festerTimerName1%</option>
@@ -160,7 +143,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <option value="%festerTimer9%">%festerTimerName9%</option>
     <option value="%festerTimer10%">%festerTimerName10%</option>
     </select>
-    <input type="submit" value="Submitadd" onclick="submitaddMessage()">
+    <input type="submit" value="Start a new Timer" onclick="startMessage()">
   </form>
 
   
@@ -168,122 +151,87 @@ const char index_html[] PROGMEM = R"rawliteral(
   </body>
 </html>)rawliteral";
 
-
+// Replaces placeholder with stored values
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
 
-String readFile(fs::FS &fs, const char * path){
-  // Serial.print(path);
-  // Serial.printf("Reading file: %s\r\n", path);
-  File file = fs.open(path, "r");
-  if(!file || file.isDirectory()){
-    // Serial.println("- empty file or failed to open file");
-    return String();
-  }
-  // Serial.println("- read from file:");
-  String fileContent;
-  while(file.available()){
-    fileContent+=String((char)file.read());
-  }
-  file.close();
-  // Serial.println(fileContent);
-  return fileContent;
-}
-
-void writeFile(fs::FS &fs, const char * path, const char * message){
-  Serial.printf("Writing file: %s\r\n", path);
-  File file = fs.open(path, "w");
-  if(!file){
-    Serial.println("- failed to open file for writing");
-    return;
-  }
-  if(file.print(message)){
-    Serial.println(message);
-    Serial.println("- file written");
-  } else {
-    Serial.println("- write failed");
-  }
-  file.close();
-}
-
 // Replaces placeholder with stored values
 String processor(const String& var){
-  //Serial.println(var);
     if(var == "festerTimerName1"){
-    return _feste_Timer_Name[0];
+    return feste_Timer_Name[0];
   }
     else if(var == "festerTimer1"){
-    return String(_feste_Timer[0]);
+    return String(feste_Timer[0]);
   }
     else if(var == "festerTimerName2"){
-    return _feste_Timer_Name[1];
+    return feste_Timer_Name[1];
   }
     else if(var == "festerTimer2"){
-    return String(_feste_Timer[1]);
+    return String(feste_Timer[1]);
   }
     else if(var == "festerTimerName3"){
-    return _feste_Timer_Name[2];
+    return feste_Timer_Name[2];
   }
     else if(var == "festerTimer3"){
-    return String(_feste_Timer[2]);
+    return String(feste_Timer[2]);
   }
     else if(var == "festerTimerName4"){
-    return _feste_Timer_Name[3];
+    return feste_Timer_Name[3];
   }
     else if(var == "festerTimer4"){
-    return String(_feste_Timer[3]);
+    return String(feste_Timer[3]);
   }
     else if(var == "festerTimerName5"){
-    return _feste_Timer_Name[4];
+    return feste_Timer_Name[4];
   }
     else if(var == "festerTimer5"){
-    return String(_feste_Timer[4]);
+    return String(feste_Timer[4]);
   }
     else if(var == "festerTimerName6"){
-    return readFile(SPIFFS, "/festerTimerName6.txt");
+    return feste_Timer_Name[5];
   }
     else if(var == "festerTimer6"){
-    return readFile(SPIFFS, "/festerTimer6.txt");
+    return String(feste_Timer[5]);
   }
     else if(var == "festerTimerName7"){
-    return readFile(SPIFFS, "/festerTimerName7.txt");
+    return feste_Timer_Name[6];
   }
     else if(var == "festerTimer7"){
-    return readFile(SPIFFS, "/festerTimer7.txt");
+    return String(feste_Timer[6]);
   }
     else if(var == "festerTimerName8"){
-    return readFile(SPIFFS, "/festerTimerName8.txt");
+    return feste_Timer_Name[7];
   }
     else if(var == "festerTimer8"){
-    return readFile(SPIFFS, "/festerTimer8.txt");
+    return String(feste_Timer[7]);
   }
     else if(var == "festerTimerName9"){
-    return readFile(SPIFFS, "/festerTimerName9.txt");
+    return feste_Timer_Name[8];
   }
     else if(var == "festerTimer9"){
-    return readFile(SPIFFS, "/festerTimer9.txt");
+    return String(feste_Timer[8]);
   }
     else if(var == "festerTimerName10"){
-    return readFile(SPIFFS, "/festerTimerName10.txt");
+    return feste_Timer_Name[9];
   }
     else if(var == "festerTimer10"){
-    return readFile(SPIFFS, "/festerTimer10.txt");
+    return String(feste_Timer[9]);
   }
     else if(var == "timer1value"){
-    return readFile(SPIFFS, "/timer1value.txt");
+    return String(timer_1/1000);
   }
     else if(var == "timer2value"){
-    return readFile(SPIFFS, "/timer2value.txt");
+    return String(timer_2/1000);
   }
     else if(var == "timer3value"){
-    return readFile(SPIFFS, "/timer3value.txt");
+    return String(timer_3/1000);
   }
     else if(var == "timer4value"){
-    return readFile(SPIFFS, "/timer4value.txt");
+    return String(timer_4/1000);
   }
     else if(var == "timer5value"){
-    return readFile(SPIFFS, "/timer5value.txt");
+    return String(timer_5/1000);
   }
     else if(var == "currentTime"){
     return Time;
@@ -291,21 +239,24 @@ String processor(const String& var){
     else if(var == "currentDate"){
     return Date;
   }
-  //   else if(var== "timer1left") {
-  //     return String(*pointer_timer);
-  // }
-  //   else if(var== "timer2left") {
-  //     return String(*(pointer_timer+1));
-  // }
-  //   else if(var== "timer3left") {
-  //     return String(*(pointer_timer+2));
-  // }
-  //   else if(var== "timer4left") {
-  //     return String(*(pointer_timer+3));
-  // }
-  //   else if(var== "timer5left") {
-  //     return String(*(pointer_timer+4));
-  // }
+    else if(var== "timer1left") {
+      return String(timer[0]/1000);
+  }
+    else if(var== "timer2left") {
+      return String(timer[1]/1000);
+  }
+    else if(var== "timer3left") {
+      return String(timer[2]/1000);
+  }
+    else if(var== "timer4left") {
+      return String(timer[3]/1000);
+  }
+    else if(var== "timer5left") {
+      return String(timer[4]/1000);
+  }
+  else if(var== "currentTimer") {
+      return String(1);
+  }
   return String();
 }
 
@@ -345,97 +296,78 @@ void setup() {
     // GET festerTimerName value on <ESP_IP>/get?festerTimerName=<inputMessage>
     if (request->hasParam(PARAM_festerTimerName6)) {
       inputMessage = request->getParam(PARAM_festerTimerName6)->value();
-      writeFile(SPIFFS, "/festerTimerName6.txt", inputMessage.c_str());
-      // Pointerfeste_Timer_Name[5] = inputMessage;
+      if(inputMessage != ""){
+        feste_Timer_Name[5] = inputMessage;
+      }
     }
     // GET inputInt value on <ESP_IP>/get?inputInt=<inputMessage>
     if (request->hasParam(PARAM_festerTimer6)) {
       inputMessage = request->getParam(PARAM_festerTimer6)->value();
-      writeFile(SPIFFS, "/festerTimer6.txt", inputMessage.c_str());
-      changetimer =inputMessage.toInt();
-      // Pointerfeste_Timer[5] = changetimer;
+      if(inputMessage != ""){
+        changetimer = (inputMessage.toInt())*1000;
+        feste_Timer[5] = changetimer;
+      }
     }
     if (request->hasParam(PARAM_festerTimerName7)) {
       inputMessage = request->getParam(PARAM_festerTimerName7)->value();
-      writeFile(SPIFFS, "/festerTimerName7.txt", inputMessage.c_str());
-      // Pointerfeste_Timer_Name[6] = inputMessage;
+      if(inputMessage != ""){
+        feste_Timer_Name[6] = inputMessage;
+      }
     }
     if (request->hasParam(PARAM_festerTimer7)) {
       inputMessage = request->getParam(PARAM_festerTimer7)->value();
-      writeFile(SPIFFS, "/festerTimer7.txt", inputMessage.c_str());
-      changetimer =inputMessage.toInt();
-      // Pointerfeste_Timer[6] = changetimer;
+      if(inputMessage != ""){
+        changetimer = (inputMessage.toInt())*1000;
+        feste_Timer[6] = changetimer;
+      }
     }
     if (request->hasParam(PARAM_festerTimerName8)) {
       inputMessage = request->getParam(PARAM_festerTimerName8)->value();
-      writeFile(SPIFFS, "/festerTimerName8.txt", inputMessage.c_str());
-      // Pointerfeste_Timer_Name[7] = inputMessage;
+      if(inputMessage != ""){
+        feste_Timer_Name[7] = inputMessage;
+      }
     }
     if (request->hasParam(PARAM_festerTimer8)) {
       inputMessage = request->getParam(PARAM_festerTimer8)->value();
-      writeFile(SPIFFS, "/festerTimer8.txt", inputMessage.c_str());
-      changetimer =inputMessage.toInt();
-      // Pointerfeste_Timer[7] = changetimer;
+      if(inputMessage != ""){
+        changetimer = (inputMessage.toInt())*1000;
+        feste_Timer[7] = changetimer;
+      }
     }
     if (request->hasParam(PARAM_festerTimerName9)) {
       inputMessage = request->getParam(PARAM_festerTimerName9)->value();
-      writeFile(SPIFFS, "/festerTimerName9.txt", inputMessage.c_str());
-      // Pointerfeste_Timer_Name[8] = inputMessage;
+      if(inputMessage != ""){
+        feste_Timer_Name[8] = inputMessage;
+      }
     }
     if (request->hasParam(PARAM_festerTimer9)) {
       inputMessage = request->getParam(PARAM_festerTimer9)->value();
-      writeFile(SPIFFS, "/festerTimer9.txt", inputMessage.c_str());
-      changetimer =inputMessage.toInt();
-      // Pointerfeste_Timer[8] = changetimer;
+      if(inputMessage != ""){
+        changetimer = (inputMessage.toInt())*1000;
+        feste_Timer[8] = changetimer;
+      }
     }
     if (request->hasParam(PARAM_festerTimerName10)) {
       inputMessage = request->getParam(PARAM_festerTimerName10)->value();
-      writeFile(SPIFFS, "/festerTimerName10.txt", inputMessage.c_str());
-      // Pointerfeste_Timer_Name[9] = inputMessage;
+      if(inputMessage != ""){
+        feste_Timer_Name[9] = inputMessage;
+      }
     }
     if (request->hasParam(PARAM_festerTimer10)) {
       inputMessage = request->getParam(PARAM_festerTimer10)->value();
-      writeFile(SPIFFS, "/festerTimer10.txt", inputMessage.c_str());
-      changetimer =inputMessage.toInt();
-      // Pointerfeste_Timer[5] = changetimer;
-    }
-    else {
-      inputMessage = "No message sent";
+      if(inputMessage != ""){
+        changetimer = (inputMessage.toInt())*1000;
+        feste_Timer[9] = changetimer;
+      }
     }
     request->send(200, "text/text", inputMessage);
   });
-  server.on("/add", HTTP_GET, [](AsyncWebServerRequest *request){
-    String inputMessage;
-    String filename;
-      if (request->hasParam(PARAM_festeTimerNameSelect)) {
-      inputMessage = request->getParam(PARAM_festeTimerNameSelect)->value();
-      // Serial.println("inputMessage:" + inputMessage);
-      }
-      if (request->hasParam(PARAM_timerSelect)) {
-      filename = request->getParam(PARAM_timerSelect)->value();
-      //  
-      const char* file = filename.c_str();
-      writeFile(SPIFFS, file, inputMessage.c_str());
-      }
+  server.on("/start", HTTP_GET, [](AsyncWebServerRequest *request){
+    Serial.println("start");
     });
-  server.on("/start1",HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("timer started");
-  });
-  server.on("/start2",HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("timer started");
-  });
-  server.on("/start3",HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("timer started");
-  });
-  server.on("/start4",HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("timer started");
-  });
-  server.on("/start5",HTTP_GET, [](AsyncWebServerRequest *request){
-    Serial.println("timer started");
-  });
   server.onNotFound(notFound);
   server.begin();
-  }
+}
 
 void web_browser_end(){
   server.end();
