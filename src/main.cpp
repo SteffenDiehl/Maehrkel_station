@@ -1,4 +1,6 @@
 #include <Arduino.h>
+#include <Adafruit_I2CDevice.h>
+#include <Adafruit_BusIO_Register.h>
 #include <charge.h>
 #include <display.h>
 #include <drive.h>

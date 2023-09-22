@@ -72,57 +72,76 @@ const char index_html[] PROGMEM = R"rawliteral(
       alert("new Timer started");
       setTimeout(function(){ document.location.reload(false); }, 500);   
     }
+    function startnow() {
+      alert("Maerkel starts");
+      setTimeout(function(){ document.location.reload(false); }, 500);   
+    }
+    function stopnow() {
+      alert("Maerkel stops");
+      setTimeout(function(){ document.location.reload(false); }, 500);   
+    }
+    function gohome() {
+      alert("Maerkel goes home");
+      setTimeout(function(){ document.location.reload(false); }, 500);   
+    }
     </script>
-    <title>enterProjectTitel</title>
+    <title>Maehrkel</title>
+    <link rel="icon" type="image/jpg" href="data/Merkel.jpg">
   </head>
   <body>
     <form target= "hidden-form">
-      <h1>Current Time: %currentTime%</h1>
-      <h1>Date: %currentDate%</h1>
-      <h2>enterTeamName </h2>
+      <h1>Maehrkel<small><small><small> by Daniel Becher, Benedikt Buettner, Steffen Diehl </small></small></small></h1>
+      <h2>Date: %currentDate%</h2>
+      <h2>Current Time: %currentTime%</h2>
     </form>
-    <th>Timer</th>
-    <th>TimerValue</th>
-    <th>Time Left</th>
-    <th>Actions</th>
+    <br>
+    <br>
+    <input type="submit" style = background-color:FireBrick value="Stop now" onclick="stopnow()">
+    <input type="submit" style = background-color:DarkGreen value="Go home" onclick="gohome()">
     <br>
     <br>
     <form target= "hidden-form">
-      Timer1: %timer1value% seconds / %timer1left% seconds
+      Timer: %timer1value% seconds / %timer1left% seconds left
     </form>
+    <input type="submit" style = background-color:DarkOrange value="Start now" onclick="startnow()">
+    <br>
     <br>
     <form target= "hidden-form">
-      Timer2: %timer2value% seconds / %timer2left% seconds
+      <strong>Timer 1</strong>
+      <br>
+      Start: %timer1value% seconds
+      &nbsp; &nbsp; &nbsp;
+      Time till start: %timer4left% seconds
+    <br>
+      End: %timer2value% seconds
+      &nbsp; &nbsp; &nbsp;
+      Time till end: %timer4left% seconds
     </form>
     <br>
-    <form target= "hidden-form">
-      Timer3: %timer3value% seconds / %timer3left% seconds
-    </form>
     <br>
     <form target= "hidden-form">
-      Timer4: %timer4value% seconds / %timer4left% seconds
-    </form>
+      <strong>Timer 2</strong>
+      <br>
+      Start: %timer3value% seconds
+      &nbsp; &nbsp; &nbsp;
+      Time till start: %timer4left% seconds
     <br>
-    <form target= "hidden-form">
-      Timer5: %timer5value% seconds / %timer5left% seconds
+      End: %timer4value% seconds
+      &nbsp; &nbsp; &nbsp;
+      Time till end: %timer4left% seconds
     </form>
     <br>
 
     <form action="/get" target="hidden-form">
-      festerTimerName6 (current value %festerTimerName6%): <input type="text" name="festerTimerName6">
-      festerTimer6 (current value %festerTimer6% ms): <input type="number " name="festerTimer6">
+      Start now Timer (current value %festerTimerName6%): <input type="text" name="festerTimerName6">
       <br>
-      festerTimerName7 (current value %festerTimerName7%): <input type="text" name="festerTimerName7">
-      festerTimer7 (current value %festerTimer7% ms): <input type="number " name="festerTimer7">
       <br>
-      festerTimerName8 (current value %festerTimerName8%): <input type="text" name="festerTimerName8">
-      festerTimer8 (current value %festerTimer8% ms): <input type="number " name="festerTimer8">
+      Start Time 1 (current value %festerTimerName7%): <input type="text" name="festerTimerName7">
+      End Time 1 (current value %festerTimer7% ms): <input type="number " name="festerTimer7">
       <br>
-      festerTimerName9 (current value %festerTimerName9%): <input type="text" name="festerTimerName9">
-      festerTimer9 (current value %festerTimer9% ms): <input type="number " name="festerTimer9">
+      Start Time 2 (current value %festerTimerName8%): <input type="text" name="festerTimerName8">
+      End Time 2 (current value %festerTimer8% ms): <input type="number " name="festerTimer8">
       <br>
-      festerTimerName10 (current value %festerTimerName10%): <input type="text" name="festerTimerName10">
-      festerTimer10 (current value %festerTimer10% ms): <input type="number " name="festerTimer10">
       <input type="submit" value="Submit" onclick="submitMessage()">
     </form>
     <br>
@@ -145,6 +164,8 @@ const char index_html[] PROGMEM = R"rawliteral(
     </select>
     <input type="submit" value="Start a new Timer" onclick="startMessage()">
   </form>
+  <p><img src="/Merkel.jpg" alt="Smiley face" style="float:right;width:42px;height:42px;">
+  </p>
 
   
   <iframe style="display:none" name="hidden-form"></iframe>
