@@ -179,101 +179,23 @@ void notFound(AsyncWebServerRequest *request) {
 
 // Replaces placeholder with stored values
 String processor(const String& var){
-    if(var == "festerTimerName1"){
-    return feste_Timer_Name[0];
-  }
-    else if(var == "festerTimer1"){
-    return String(feste_Timer[0]);
-  }
-    else if(var == "festerTimerName2"){
-    return feste_Timer_Name[1];
-  }
-    else if(var == "festerTimer2"){
-    return String(feste_Timer[1]);
-  }
-    else if(var == "festerTimerName3"){
-    return feste_Timer_Name[2];
-  }
-    else if(var == "festerTimer3"){
-    return String(feste_Timer[2]);
-  }
-    else if(var == "festerTimerName4"){
-    return feste_Timer_Name[3];
-  }
-    else if(var == "festerTimer4"){
-    return String(feste_Timer[3]);
-  }
-    else if(var == "festerTimerName5"){
-    return feste_Timer_Name[4];
-  }
-    else if(var == "festerTimer5"){
-    return String(feste_Timer[4]);
-  }
-    else if(var == "festerTimerName6"){
-    return feste_Timer_Name[5];
-  }
-    else if(var == "festerTimer6"){
-    return String(feste_Timer[5]);
-  }
-    else if(var == "festerTimerName7"){
-    return feste_Timer_Name[6];
-  }
-    else if(var == "festerTimer7"){
-    return String(feste_Timer[6]);
-  }
-    else if(var == "festerTimerName8"){
-    return feste_Timer_Name[7];
-  }
-    else if(var == "festerTimer8"){
-    return String(feste_Timer[7]);
-  }
-    else if(var == "festerTimerName9"){
-    return feste_Timer_Name[8];
-  }
-    else if(var == "festerTimer9"){
-    return String(feste_Timer[8]);
-  }
-    else if(var == "festerTimerName10"){
+  if(var == "festerTimerName10"){
     return feste_Timer_Name[9];
   }
-    else if(var == "festerTimer10"){
+  else if(var == "festerTimer10"){
     return String(feste_Timer[9]);
   }
-    else if(var == "timer1value"){
+  else if(var == "timer1value"){
     return String(timer_1/1000);
   }
-    else if(var == "timer2value"){
-    return String(timer_2/1000);
-  }
-    else if(var == "timer3value"){
-    return String(timer_3/1000);
-  }
-    else if(var == "timer4value"){
-    return String(timer_4/1000);
-  }
-    else if(var == "timer5value"){
-    return String(timer_5/1000);
-  }
-    else if(var == "currentTime"){
+  else if(var == "currentTime"){
     return Time;
   }
-    else if(var == "currentDate"){
+  else if(var == "currentDate"){
     return Date;
   }
-    else if(var== "timer1left") {
+  else if(var== "timer1left") {
       return String(timer[0]/1000);
-  }
-    else if(var== "timer2left") {
-      return String(timer[1]/1000);
-  }
-    else if(var== "timer3left") {
-      return String(timer[2]/1000);
-  }
-    else if(var== "timer4left") {
-      return String(timer[3]/1000);
-  }
-    else if(var== "timer5left") {
-      return String(timer[4]/1000);
   }
   else if(var== "currentTimer") {
       return String(1);
@@ -322,63 +244,11 @@ void setup_webbrwoser() {
       }
     }
     // GET inputInt value on <ESP_IP>/get?inputInt=<inputMessage>
-    if (request->hasParam(PARAM_festerTimer6)) {
-      inputMessage = request->getParam(PARAM_festerTimer6)->value();
-      if(inputMessage != ""){
-        changetimer = (inputMessage.toInt())*1000;
-        feste_Timer[5] = changetimer;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimerName7)) {
-      inputMessage = request->getParam(PARAM_festerTimerName7)->value();
-      if(inputMessage != ""){
-        feste_Timer_Name[6] = inputMessage;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimer7)) {
-      inputMessage = request->getParam(PARAM_festerTimer7)->value();
-      if(inputMessage != ""){
-        changetimer = (inputMessage.toInt())*1000;
-        feste_Timer[6] = changetimer;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimerName8)) {
-      inputMessage = request->getParam(PARAM_festerTimerName8)->value();
-      if(inputMessage != ""){
-        feste_Timer_Name[7] = inputMessage;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimer8)) {
-      inputMessage = request->getParam(PARAM_festerTimer8)->value();
-      if(inputMessage != ""){
-        changetimer = (inputMessage.toInt())*1000;
-        feste_Timer[7] = changetimer;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimerName9)) {
-      inputMessage = request->getParam(PARAM_festerTimerName9)->value();
-      if(inputMessage != ""){
-        feste_Timer_Name[8] = inputMessage;
-      }
-    }
     if (request->hasParam(PARAM_festerTimer9)) {
       inputMessage = request->getParam(PARAM_festerTimer9)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt())*1000;
         feste_Timer[8] = changetimer;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimerName10)) {
-      inputMessage = request->getParam(PARAM_festerTimerName10)->value();
-      if(inputMessage != ""){
-        feste_Timer_Name[9] = inputMessage;
-      }
-    }
-    if (request->hasParam(PARAM_festerTimer10)) {
-      inputMessage = request->getParam(PARAM_festerTimer10)->value();
-      if(inputMessage != ""){
-        changetimer = (inputMessage.toInt())*1000;
-        feste_Timer[9] = changetimer;
       }
     }
     request->send(200, "text/text", inputMessage);
