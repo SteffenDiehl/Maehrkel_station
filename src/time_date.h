@@ -1,45 +1,33 @@
-#include <WiFi.h>
+
 #include <Wire.h>
 #include <WiFiUdp.h>
 #include "RTClib.h"
 #include <time.h>
 #include <NTPClient.h>
 
-RTC_DS3231 rtc;             // RTC-Instanz
-WiFiUDP udp;                // WiFiUDP-Instanz 
-NTPClient timeClient(udp,"de.pool.ntp.org", 7200);  // NTPClient-Instanz
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
 
-void synchronizeRTC()
-{
-  // Mit NTP-Server verbinden
-    timeClient.begin();
+void get_time_date(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_month, int *c_year) {
+  timeClient.update();
+  String formattedTime = timeClient.getFormattedTime();
 
-  // RTC-Zeit mit NTP_Server synchronisieren
-    if (timeClient.update())
-    {
-    rtc.adjust(timeClient.getEpochTime());
-    }
+  // Parse the formatted time string (HH:MM:SS format)
+  int colon1 = formattedTime.indexOf(':');
+  int colon2 = formattedTime.lastIndexOf(':');
 
-  // Verbindung schließen
-    timeClient.end();
-}
+  // Extract hour, minute, and second as integers
+  *c_hour = formattedTime.substring(0, colon1).toInt();
+  *c_hour += 2;
+  *c_min = formattedTime.substring(colon1 + 1, colon2).toInt();
+  *c_sec = formattedTime.substring(colon2 + 1).toInt();
 
-void start_RTC()
-{
-    Wire.begin();
-    rtc.begin();
+  unsigned long epochTime = timeClient.getEpochTime();
+  time_t time_t_epochTime = static_cast<time_t>(epochTime); // Convert to time_t
+  struct tm *timeinfo;
+  timeinfo = gmtime(&time_t_epochTime);
 
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-}
-
-void ac_time(int *Y, int *M, int *D, int *h, int *m, int *s)
-{
-    DateTime now = rtc.now();
-
-    *Y = now.year();
-    *M = now.month();
-    *D = now.day();
-    *h = now.hour();
-    *m = now.minute();
-    *s = now.second();
+  *c_year = timeinfo->tm_year + 1900;  // Years since 1900
+  *c_month = timeinfo->tm_mon + 1;     // Months since January (0-11)
+  *c_day = timeinfo->tm_mday; 
 }

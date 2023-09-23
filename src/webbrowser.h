@@ -47,14 +47,17 @@ unsigned long timer_4 = 0;
 unsigned long timer_5 = 0;
 unsigned long timer[5];
 
-String Date;
-int D =23;
-int M =19;
-int Y =2023;
-String Time;
-int h =12;
-int m =23;
-int s =06;
+String Date = "";
+int *web_year = nullptr;
+int *web_month = nullptr;
+int *web_day = nullptr;
+
+String Time = "";
+int *web_hour = nullptr;
+int *web_min = nullptr;
+int *web_sec = nullptr;
+
+int *web_status = nullptr;
 
 unsigned long _timer[5] = {0, 0, 0, 0, 0};
 
@@ -86,15 +89,15 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
     </script>
     <title>Maehrkel</title>
-    <link rel="icon" type="image/jpg" href="data/Merkel.jpg">
+    <link rel="icon" type="image/jpg" href="images/Merkel.jpg">
   </head>
   <body>
     <form target= "hidden-form">
       <h1>Maehrkel<small><small><small> by Daniel Becher, Benedikt Buettner, Steffen Diehl </small></small></small></h1>
       <h2>Date: %currentDate%</h2>
       <h2>Current Time: %currentTime%</h2>
+  <p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
     </form>
-    <br>
     <br>
     <input type="submit" style = background-color:FireBrick value="Stop now" onclick="stopnow()">
     <input type="submit" style = background-color:DarkGreen value="Go home" onclick="gohome()">
@@ -164,10 +167,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     </select>
     <input type="submit" value="Start a new Timer" onclick="startMessage()">
   </form>
-  <p><img src="/Merkel.jpg" alt="Smiley face" style="float:right;width:42px;height:42px;">
-  </p>
-
-  
   <iframe style="display:none" name="hidden-form"></iframe>
   </body>
 </html>)rawliteral";
@@ -203,7 +202,14 @@ String processor(const String& var){
   return String();
 }
 
-void setup_webbrwoser() {
+void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_month, int *c_year, int *c_status) {
+  web_hour = c_hour;
+  web_min = c_min;
+  web_sec = c_sec;
+  web_day = c_day;
+  web_month = c_month;
+  web_year = c_year;
+  web_status = c_status;
   Serial.begin(115200);
   // Initialize SPIFFS
   #ifdef ESP32
@@ -263,8 +269,18 @@ void setup_webbrwoser() {
 void web_browser_end(){
   server.end();
 }
+String formatDigits(int number) {
+  if (number < 10) {
+    return "0" + String(number);
+  } else {
+    return String(number);
+  }
+}
 
 void set_date_time() {
-  Date =  String(D) + "." + String(M) + "." + String(Y);
-  Time = String(h) + ":" + String(m) + ":" + String(s);
+  String d = formatDigits(*web_day);
+  String m = formatDigits(*web_month);
+  Date = d + "." + m + "." + String(*web_year);
+  Time = formatDigits(*web_hour) + ":" + formatDigits(*web_min) + ":" + formatDigits(*web_sec);
+// Function to format a number as a two-digit string
 }

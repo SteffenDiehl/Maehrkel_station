@@ -26,7 +26,7 @@ void timer_output(unsigned long time){
     display.setTextSize(2);
     display.printf("%2i:%2i:%2i\n", hours, minutes, seconds);
 }
-void display_Anzeige(int *m, int *p, int *p_max, int *t, unsigned long *t1, unsigned long *t2, unsigned long *t3, unsigned long *t4, unsigned long *t5, int *h, int *min, int *s, int *D, int *M, int *Y, String *fix_timer_name, int *wi_fi, int *t_out, unsigned long *ti, int *t_pause, int *t_anz){
+void display_write(int *m, int *p, int *p_max, int *t, unsigned long *t1, unsigned long *t2, unsigned long *t3, unsigned long *t4, unsigned long *t5, int *h, int *min, int *s, int *D, int *M, int *Y, String *fix_timer_name, int *wi_fi, int *t_out, unsigned long *ti, int *t_pause, int *t_anz){
     struct tm timeinfo;
     display.clearDisplay();
     display.setTextColor(WHITE);
