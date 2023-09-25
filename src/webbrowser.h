@@ -58,9 +58,12 @@ int *web_min = nullptr;
 int *web_sec = nullptr;
 
 int *web_status = nullptr;
+String web_status_color[3] = {"green", "red", "yellow"};
 
 unsigned long _timer[5] = {0, 0, 0, 0, 0};
-
+// <center><font size='+2' color='blue'>Cisco Packet Tracer</font></center>
+// <html><body style="background-color: lightgreen;">
+// <hr>Welcome to Cisco Packet Tracer. Opening doors to new opportunities. Mind Wide Open
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
 <html><body style="background-color: lightgreen;">
@@ -89,7 +92,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     }
     </script>
     <title>Maehrkel</title>
-    <link rel="icon" type="image/jpg" href="images/Merkel.jpg">
+    <link rel="icon" type="image/jpg" href="/images/Merkel.jpg">
   </head>
   <body>
     <form target= "hidden-form">
@@ -99,14 +102,20 @@ const char index_html[] PROGMEM = R"rawliteral(
   <p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
     </form>
     <br>
-    <input type="submit" style = background-color:FireBrick value="Stop now" onclick="stopnow()">
-    <input type="submit" style = background-color:DarkGreen value="Go home" onclick="gohome()">
+    <form action="/stopnow" target="hidden-form">
+      <input type="submit" style = background-color:FireBrick value="Stop now" onclick="stopnow()">
+    </form>
+    <form action="/gohomw" target="hidden-form">
+      <input type="submit" style = background-color:DarkGreen value="Go home" onclick="gohome()">
+    </form>
     <br>
     <br>
     <form target= "hidden-form">
       Timer: %timer1value% seconds / %timer1left% seconds left
     </form>
-    <input type="submit" style = background-color:DarkOrange value="Start now" onclick="startnow()">
+    <form action="/startnow" target="hidden-form">
+      <input type="submit" style = background-color:DarkOrange value="Start now" onclick="startnow()">
+    </form>
     <br>
     <br>
     <form target= "hidden-form">
@@ -199,6 +208,9 @@ String processor(const String& var){
   else if(var== "currentTimer") {
       return String(1);
   }
+  else if(var== "statuscolor") {
+      return web_status_color[*web_status];
+  }
   return String();
 }
 
@@ -236,6 +248,18 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
   // Send web page with input fields to client
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
+  });
+
+  server.on("/gohome", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 3;
+  });
+
+  server.on("/stopnow", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 2;
+  });
+
+  server.on("/startnow", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 1;
   });
 
   // Send a GET request to <ESP_IP>/get?festerTimerName=<inputMessage>
