@@ -3,10 +3,9 @@
 #include <Adafruit_BusIO_Register.h>
 #include <charge.h>
 #include <display.h>
-#include <drive.h>
 #include <safety.h>
 #include <webbrowser.h>
-#include <connect.h>
+#include <weather.h>
 #include <time_date.h>
 
 int current_hour = 0;
