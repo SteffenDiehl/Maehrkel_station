@@ -53,11 +53,13 @@ unsigned long timer_5 = 0;
 unsigned long timer[5];
 
 String Date = "";
+const char* ptr_Date = Date.c_str();
 int *web_year = nullptr;
 int *web_month = nullptr;
 int *web_day = nullptr;
 
 String Time = "";
+const char* ptr_Time = Time.c_str();
 int *web_hour = nullptr;
 int *web_min = nullptr;
 int *web_sec = nullptr;
@@ -268,8 +270,12 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
     *web_status = 1;
   });
 
-  server.on("/connect", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send_P(200, "text/plain", "it works");
+  server.on("/Date", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ptr_Date);
+  });
+
+  server.on("/Time", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", ptr_Time);
   });
 
   // Send a GET request to <ESP_IP>/get?festerTimerName=<inputMessage>
