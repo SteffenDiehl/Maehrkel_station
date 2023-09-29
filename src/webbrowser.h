@@ -244,6 +244,18 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
     request->send_P(200, "text/html", index_html, processor);
   });
 
+    server.on("/gohome", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 3;
+  });
+
+  server.on("/stopnow", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 2;
+  });
+
+  server.on("/startnow", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 1;
+  });
+
   // Send a GET request to <ESP_IP>/get?festerTimerName=<inputMessage>
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     unsigned long changetimer;
