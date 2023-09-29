@@ -15,6 +15,11 @@ AsyncWebServer server(80);
 const char* ssid = "JustDiehlWithIt";
 const char* password = "DiehlWithIt09";
 
+IPAddress staticIP(192, 168, 178, 26); // Die gewünschte IP-Adresse
+IPAddress gateway(192, 168, 178, 1);    // Das Gateway
+IPAddress subnet(255, 255, 255, 0);   // Die Subnetzmaske
+IPAddress dns(8, 8, 8, 8);
+
 const char* PARAM_festerTimerName6 = "festerTimerName6";
 const char* PARAM_festerTimer6 = "festerTimer6";
 const char* PARAM_festerTimerName7 = "festerTimerName7";
@@ -230,6 +235,7 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
     Serial.println("WiFi Failed!");
     return;
   }
+  WiFi.config(staticIP, gateway, subnet, dns);
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
 
