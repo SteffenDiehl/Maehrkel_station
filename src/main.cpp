@@ -17,8 +17,8 @@ int current_year = 0;
 int status = 0;
 
 void setup(){
+    Serial.begin(115200);
     setup_webbrwoser(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year, &status);
-
 }
 void loop(){
     get_time_date(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year);

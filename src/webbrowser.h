@@ -229,7 +229,6 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
   web_month = c_month;
   web_year = c_year;
   web_status = c_status;
-  Serial.begin(115200);
   // Initialize SPIFFS
   #ifdef ESP32
     if(!SPIFFS.begin(true)){
