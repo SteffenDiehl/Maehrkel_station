@@ -1,66 +1,35 @@
-#include <SPI.h>
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Adafruit_I2CDevice.h>
-#include <time.h>
+#include <Arduino_GFX_Library.h>
 
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define TFT_SCK    18
+#define TFT_MOSI   23
+#define TFT_MISO   19
+#define TFT_CS     22
+#define TFT_DC     21
+#define TFT_RESET  17
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-    Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-void start_display(){
-    if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    for(;;); // Don't proceed, loop forever
-    }
-     // Show initial display buffer contents on the screen --
-     // the library initializes this with an Adafruit splash screen.
-    display.display();
+Arduino_ESP32SPI bus = Arduino_ESP32SPI(TFT_DC, TFT_CS, TFT_SCK, TFT_MOSI, TFT_MISO);
+Arduino_ILI9341 display = Arduino_ILI9341(&bus, TFT_RESET);
+String myStatus[] = {"RUN", "GO HOME", "STOP"};
+
+void setup_display()
+{
+    display.begin();
+    display.setRotation(1);
+    display.fillScreen(GREEN);
+    display.fillRect(0, 0, 320, 100, DARKGREEN);
+    display.setCursor(20, 20);
+    display.setTextColor(BLACK);
 }
-void timer_output(unsigned long time){
-    int hours = time / 3600000;
-    int minutes = (time - hours*3600000)/60000;
-    int seconds = (time - hours*3600000 - minutes*60000)/1000;
-    display.setTextSize(2);
-    display.printf("%2i:%2i:%2i\n", hours, minutes, seconds);
-}
-void display_write(int *m, int *p, int *p_max, int *t, unsigned long *t1, unsigned long *t2, unsigned long *t3, unsigned long *t4, unsigned long *t5, int *h, int *min, int *s, int *D, int *M, int *Y, String *fix_timer_name, int *wi_fi, int *t_out, unsigned long *ti, int *t_pause, int *t_anz){
-    struct tm timeinfo;
-    display.clearDisplay();
-    display.setTextColor(WHITE);
-    display.setFont();
-    display.setTextSize(1);
-    switch(*m){
-        case 1://kein Timer aktiv
-            *p_max = 2;
-            switch (*p)
-            {
-            case 1: 
-                display.setCursor(0,10);
-                display.printf("Date: %2i.%2i.%4i\n", *D, *M, *Y);
-                display.printf("Time: %2i:%2i:%2i\n", *h, *min, *s);
-                display.setTextSize(2);
-                display.println("new Timer");
-                display.setTextSize(1);
-                display.println("WiFi");
-                break;
-            default:
-                display.setTextSize(3);
-                display.println("Error");
-                break;
-            }
-            break;
-        default://Start und Standby Bildschirm
-            display.setCursor(1, 10);
-            display.setTextSize(2);
-            display.setCursor(35, 5);
-            display.printf("Event\n  Horizon\n");
-            display.setTextSize(1);
-            display.printf("         von\n");
-            display.printf("    Team Buiskuit");
-            break;
-        }
-    display.display();
+void display_output(String cDate, String cTime, int cStatus){
+    display.fillScreen(GREEN);
+    display.fillRect(0, 0, 320, 40, DARKGREEN);
+    display.setCursor(12, 12);
+    display.setTextSize(3.5);
+    display.println("Maehrkel_Station");
+    display.setTextSize(2.8);
+    display.setCursor(0, 50);
+    display.println("IP: 192.168.178.26");
+    display.println("Date: " + cDate);
+    display.println("Time: " + cTime);
+    display.println("Status: " + myStatus[cStatus]);
 }
