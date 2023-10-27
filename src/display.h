@@ -15,21 +15,28 @@ void setup_display()
 {
     display.begin();
     display.setRotation(1);
-    display.fillScreen(GREEN);
-    display.fillRect(0, 0, 320, 100, DARKGREEN);
     display.setCursor(20, 20);
     display.setTextColor(BLACK);
-}
-void display_output(String cDate, String cTime, int cStatus){
-    display.fillScreen(GREEN);
     display.fillRect(0, 0, 320, 40, DARKGREEN);
     display.setCursor(12, 12);
     display.setTextSize(3.5);
     display.println("Maehrkel_Station");
+    display.fillRect(0, 40, 320, 200, GREEN);
     display.setTextSize(2.8);
     display.setCursor(0, 50);
-    display.println("IP: 192.168.178.26");
-    display.println("Date: " + cDate);
-    display.println("Time: " + cTime);
-    display.println("Status: " + myStatus[cStatus]);
+    display.println(" IP:");
+    display.println(" Date:");
+    display.println(" Time:");
+    display.println(" Status:");
+    display.setCursor(108, 50);
+    display.println("192.168.178.26");
+}
+void display_output(String cDate, String cTime, int cStatus){
+    display.fillRect(100, 65, 220, 50, GREEN);
+    display.setCursor(108, 66);
+    display.println(cDate);
+    display.setCursor(108, 82);
+    display.println(cTime);
+    display.setCursor(108, 98);
+    display.println(myStatus[cStatus]);
 }

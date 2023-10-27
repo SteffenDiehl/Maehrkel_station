@@ -27,9 +27,9 @@ void setup(){
 }
 void loop(){
     main_Date = String(current_day) + ":" + String(current_month) + ":" + String(current_year);
-    main_Time = String(current_hour) + "." + String(current_min) + "." + String(current_sec);
+    main_Time = formatDigits(current_hour) + ":" + formatDigits(current_min) + ":" + formatDigits(current_sec);
     get_time_date(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year);
     set_date_time();
     display_output(main_Date, main_Time, status);
-    delay(1000);
+    delay(500);
 }
