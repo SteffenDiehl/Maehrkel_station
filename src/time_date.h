@@ -18,7 +18,7 @@ void get_time_date(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_month
 
   // Extract hour, minute, and second as integers
   *c_hour = formattedTime.substring(0, colon1).toInt();
-  *c_hour += 2;
+  *c_hour += 1;
   *c_min = formattedTime.substring(colon1 + 1, colon2).toInt();
   *c_sec = formattedTime.substring(colon2 + 1).toInt();
 

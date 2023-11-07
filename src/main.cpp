@@ -15,7 +15,7 @@ int current_day = 0;
 int current_month = 0;
 int current_year = 0;
 
-int status = 0;
+int status = 2;
 
 String main_Date = "";
 String main_Time = "";
