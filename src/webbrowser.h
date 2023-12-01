@@ -12,8 +12,8 @@
 #include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);
-const char* ssid = "DiehlWithIt";
-const char* password = "DiehlWithIt";
+const char* ssid = "JustDiehlWithIt";
+const char* password = "DiehlWithIt09";
 
 IPAddress staticIP(192, 168, 43, 68); // Die gewünschte IP-Adresse
 IPAddress gateway(192, 168, 43, 1);    // Das Gateway
@@ -24,14 +24,17 @@ const char* start_now_timer = "start_now_timer";
 int now_timer = 0;
 const char* left_now_timer = "left_now_timer";
 int left_timer = 0;
-const char* start_timer1 = "start_timer1";
-int start1 = 0;
-const char* end_timer1 = "end_timer1";
-int end1 = 0;
-const char* start_timer2 = "start_timer2";
-int start2 = 0;
-const char* end_timer2 = "end_timer2";
-int end2 = 0;
+const char* start_timer1_hour = "start_timer1_hour";
+int start1_hour = 0;
+const char* start_timer1_min = "start_timer1_min";
+int start1_min = 0;
+const char* start_timer2_hour = "start_timer2_hour";
+int start2_hour = 0;
+const char* start_timer2_min = "start_timer2_min";
+int start2_min = 0;
+
+int mowtime_hour = 0;
+int mowtime_min = 30;
 
 const char* PARAM_CURRENTTIME = "currentTime";
 
@@ -52,33 +55,33 @@ String web_status_color[3] = {"DarkGreen", "DarkOrange", "FireBrick"};
 
 unsigned long _timer[5] = {0, 0, 0, 0, 0};
 
+    // <script>
+    // function submitMessage() {
+    //   alert("Saved value to ESP SPIFFS");
+    //   setTimeout(function(){ document.location.reload(false); }, 500);   
+    // }
+    // function startMessage() {
+    //   alert("new Timer started");
+    //   setTimeout(function(){ document.location.reload(false); }, 500);   
+    // }
+    // function startnow() {
+    //   alert("Maerkel starts");
+    //   setTimeout(function(){ document.location.reload(false); }, 500);   
+    // }
+    // function stopnow() {
+    //   alert("Maerkel stops");
+    //   setTimeout(function(){ document.location.reload(false); }, 500);   
+    // }
+    // function gohome() {
+    //   alert("Maerkel goes home");
+    //   setTimeout(function(){ document.location.reload(false); }, 500);   
+    // }
+    // </script>
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
 <html><body style="background-color: lightgreen;">
   <head>
     <meta http-equiv="refresh" content="10">
-    <script>
-    function submitMessage() {
-      alert("Saved value to ESP SPIFFS");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
-    function startMessage() {
-      alert("new Timer started");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
-    function startnow() {
-      alert("Maerkel starts");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
-    function stopnow() {
-      alert("Maerkel stops");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
-    function gohome() {
-      alert("Maerkel goes home");
-      setTimeout(function(){ document.location.reload(false); }, 500);   
-    }
-    </script>
     <title>Maehrkel</title>
     <link rel="icon" type="image/jpg" href="/images/Merkel.jpg">
   </head>
@@ -147,11 +150,11 @@ const char index_html[] PROGMEM = R"rawliteral(
       Start now Timer (current value %StartNow%): <input type="text" name="start_now_timer">
       <br>
       <br>
-      Start Time 1 (current value %Start1%): <input type="text" name="start_timer1">
-      End Time 1 (current value %End1% ms): <input type="number " name="end_timer1">
+      Start Time 1 (current value %start1_hour%): <input type="text" name="start_timer1_hour">
+      End Time 1 (current value %start1_min% ms): <input type="number " name="start_timer1_min">
       <br>
-      Start Time 2 (current value %Start2%): <input type="text" name="start_timer2">
-      End Time 2 (current value %End2% ms): <input type="number " name="end_timer2">
+      Start Time 2 (current value %start2_hour%): <input type="text" name="start_timer2_hour">
+      End Time 2 (current value %start2_min% ms): <input type="number " name="start_timer2_min">
       <br>
       <input type="submit" value="Submit" onclick="submitMessage()">
     </form>
@@ -188,17 +191,17 @@ String processor(const String& var){
   if(var == "StartNow"){
     return String(now_timer);
   }
-  else if(var == "Start1"){
-    return String(start1);
+  else if(var == "start1_hour"){
+    return String(start1_hour);
   }
-  else if(var == "End1"){
-    return String(end1);
+  else if(var == "start1_min"){
+    return String(start1_min);
   }
-  else if(var == "Start2"){
-    return String(start2);
+  else if(var == "start2_hour"){
+    return String(start2_hour);
   }
-  else if(var == "End2"){
-    return String(end2);
+  else if(var == "start2_min"){
+    return String(start2_min);
   }
   else if(var == "currentTime"){
     return Time;
@@ -287,32 +290,32 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
         now_timer = changetimer;
       }
     }
-    if (request->hasParam(start_timer1)) {
-      inputMessage = request->getParam(start_timer1)->value();
+    if (request->hasParam(start_timer1_hour)) {
+      inputMessage = request->getParam(start_timer1_hour)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt())*1000;
-        start1 = changetimer;
+        start1_hour = changetimer;
       }
     }
-    if (request->hasParam(end_timer1)) {
-      inputMessage = request->getParam(end_timer1)->value();
+    if (request->hasParam(start_timer1_min)) {
+      inputMessage = request->getParam(start_timer1_min)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt())*1000;
-        end1 = changetimer;
+        start1_min = changetimer;
       }
     }
-    if (request->hasParam(start_timer2)) {
-      inputMessage = request->getParam(start_timer2)->value();
+    if (request->hasParam(start_timer2_hour)) {
+      inputMessage = request->getParam(start_timer2_hour)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt())*1000;
-        start2 = changetimer;
+        start2_hour = changetimer;
       }
     }
-    if (request->hasParam(end_timer2)) {
-      inputMessage = request->getParam(end_timer2)->value();
+    if (request->hasParam(start_timer2_min)) {
+      inputMessage = request->getParam(start_timer2_min)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt())*1000;
-        end2 = changetimer;
+        start2_min = changetimer;
       }
     }
     request->send(200, "text/text", inputMessage);
