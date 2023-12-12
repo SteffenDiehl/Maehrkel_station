@@ -1,7 +1,4 @@
-#include <Wire.h>
 #include <WiFiUdp.h>
-#include "RTClib.h"
-#include <time.h>
 #include <NTPClient.h>
 
 WiFiUDP ntpUDP;

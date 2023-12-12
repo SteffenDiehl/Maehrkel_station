@@ -20,29 +20,34 @@ IPAddress gateway(192, 168, 178, 1);    // Das Gateway
 IPAddress subnet(255, 255, 255, 0);   // Die Subnetzmaske
 IPAddress dns(8, 8, 8, 8);
 
-const char* start_now_timer = "start_now_timer";
-int now_timer = 0;
+const char* now_timer = "start_now_timer";
+int *web_now_timer_hour = nullptr;
+int *web_now_timer_min = nullptr;
 const char* left_now_timer = "left_now_timer";
-int left_timer = 0;
+int *web_now_hour = nullptr;
+int *web_now_min = nullptr;
+int *web_timer_now = nullptr;
 
 const char* start_timer1_hour = "start_timer1_hour";
-int start1_hour = 0;
+int *start1_hour = nullptr;
 const char* start_timer1_min = "start_timer1_min";
-int start1_min = 0;
+int *start1_min = nullptr;
 const char* start_timer1 = "start_timer1";
 String start1 = "0";
 String end1 = "0";
+int *web_timer1 = nullptr;
 
 const char* start_timer2_hour = "start_timer2_hour";
-int start2_hour = 0;
+int *start2_hour = nullptr;
 const char* start_timer2_min = "start_timer2_min";
-int start2_min = 0;
+int *start2_min = nullptr;
 const char* start_timer2 = "start_timer2";
 String start2 = "0";
 String end2 = "0";
+int *web_timer2 = nullptr;
 
-int mowtime_hour = 1;
-int mowtime_min = 30;
+int *mowtime_hour = nullptr;
+int *mowtime_min = nullptr;
 
 const char* PARAM_CURRENTTIME = "currentTime";
 
@@ -89,7 +94,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     </script>
 <html><body style="background-color: lightgreen;">
   <head>
-    <meta http-equiv="refresh" content="10">
+    <meta http-equiv="refresh" content="60">
     <title>Maehrkel</title>
     <link rel="icon" type="image/jpg" href="/images/Merkel.jpg">
   </head>
@@ -126,7 +131,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       <strong>Start now Timer</strong>
       <br>
     <br>
-      %left_now_timer% min / %StartNow% min left
+      %left_now_timer% / %StartNow%
     <br>
     <br>
     </form>
@@ -155,7 +160,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       End: %end_timer2%
       <br>
       hour(current value %start2_hour% h): <input type="text" name="start_timer2_hour">
-      min(current value %start2_min% min): <input type="number " name="start_timer2_min">
+      min(current value %start2_min% ): <input type="number " name="start_timer2_min">
       <br>
       <br>
       <input type="submit" value="Submit" onclick="submitMessage()">
@@ -191,19 +196,20 @@ void notFound(AsyncWebServerRequest *request) {
 // Replaces placeholder with stored values
 String processor(const String& var){
   if(var == "StartNow"){
-    return String(now_timer);
+    String ret_str = String(*web_now_timer_hour) + "h : " + String(*web_now_timer_min) + "min";
+    return ret_str;
   }
   else if(var == "start1_hour"){
-    return String(start1_hour);
+    return String(*start1_hour);
   }
   else if(var == "start1_min"){
-    return String(start1_min);
+    return String(*start1_min);
   }
   else if(var == "start2_hour"){
-    return String(start2_hour);
+    return String(*start2_hour);
   }
   else if(var == "start2_min"){
-    return String(start2_min);
+    return String(*start2_min);
   }
   else if(var == "currentTime"){
     return Time;
@@ -212,7 +218,15 @@ String processor(const String& var){
     return Date;
   }
   else if(var== "left_now_timer") {
-      return String(left_timer);
+    String ret_str;
+    if (*web_timer_now == 1)
+    {
+      ret_str = String(*web_now_timer_hour + *web_now_hour - *web_hour) + "h : " + String(*web_now_timer_min + *web_now_min - *web_min) + "min";
+    }
+    else{
+      ret_str = "0h : 0min";
+    }
+    return ret_str;
   }
   else if(var== "currentTimer") {
       return String(1);
@@ -257,7 +271,16 @@ String calcTime(int hour, int extraHour, int min, int extraMin) {
   end = formatDigits(newHour) + ":" +  formatDigits(newMin);
   return end;
 }
-void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_month, int *c_year, int *c_status) {
+void setup_webbrowser(
+    int *c_hour, int *c_min, int *c_sec,
+    int *c_day, int *c_month, int *c_year,
+    int *c_status,
+    int *c_mow_h, int *c_mow_m,
+    int *c_now_h, int *c_now_m, int *c_now_timer_h, int *c_now_timer_m,
+    int *c_timer_now,
+    int *c_start1_h, int *c_start1_m, int *c_timer1,
+    int *c_start2_h, int *c_start2_m, int *c_timer2) {
+
   web_hour = c_hour;
   web_min = c_min;
   web_sec = c_sec;
@@ -265,6 +288,22 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
   web_month = c_month;
   web_year = c_year;
   web_status = c_status;
+  mowtime_hour = c_mow_h;
+  mowtime_min = c_mow_m;
+  
+  web_now_hour = c_now_h;
+  web_now_min = c_now_m;
+  web_now_timer_hour = c_now_timer_h;
+  web_now_timer_min = c_now_timer_m;
+  web_timer_now = c_timer_now;
+
+  start1_hour = c_start1_h;
+  start1_min = c_start1_m;
+  start2_hour = c_start2_h;
+  start2_min = c_start2_m;
+  web_timer1 = c_timer1;
+  web_timer2 = c_timer2;
+  
   // Initialize SPIFFS
   #ifdef ESP32
     if(!SPIFFS.begin(true)){
@@ -297,6 +336,9 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
     *web_status = 2;
   });
   server.on("/startnow", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_now_hour = *web_hour;
+    *web_now_min = *web_min;
+    //*web_timer_now
     *web_status = 0;
   });
   server.on("/Date", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -311,11 +353,25 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     unsigned long changetimer;
     String inputMessage;
-    if (request->hasParam(start_now_timer)) {
-      inputMessage = request->getParam(start_now_timer)->value();
+    if (request->hasParam(now_timer)) {
+      inputMessage = request->getParam(now_timer)->value();
       if(inputMessage != ""){
         changetimer = (inputMessage.toInt());
-        now_timer = changetimer;
+        if (changetimer > 90)
+        {
+          *web_now_timer_hour = 0;
+          *web_now_timer_min = 0;
+        }
+        else if (changetimer < 60)
+        {
+          *web_now_timer_hour = changetimer / 60;
+          *web_now_timer_min = changetimer % 60;
+        }
+        else
+        {
+          *web_now_timer_hour = changetimer / 60;
+          *web_now_timer_min = changetimer % 60;
+        }
       }
     }
     if (request->hasParam(start_timer1_hour)) {
@@ -326,7 +382,7 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
         {
           changetimer = 0;
         }
-        start1_hour = changetimer;
+        *start1_hour = changetimer;
       }
     }
     if (request->hasParam(start_timer1_min)) {
@@ -337,7 +393,7 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
         {
           changetimer = 0;
         }
-        start1_min = changetimer;
+        *start1_min = changetimer;
       }
     }
     if (request->hasParam(start_timer2_hour)) {
@@ -348,7 +404,7 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
         {
           changetimer = 0;
         }
-        start2_hour = changetimer;
+        *start2_hour = changetimer;
       }
     }
     if (request->hasParam(start_timer2_min)) {
@@ -359,13 +415,13 @@ void setup_webbrwoser(int *c_hour, int *c_min, int *c_sec, int *c_day, int *c_mo
         {
           changetimer = 0;
         }
-        start2_min = changetimer;
+        *start2_min = changetimer;
       }
     }
-    start1 = formatDigits(start1_hour) + ":" + formatDigits(start1_min);
-    end1 = calcTime(start1_hour, mowtime_hour, start1_min, mowtime_min);
-    start2 = formatDigits(start2_hour) + ":" + formatDigits(start2_min);
-    end2 = calcTime(start2_hour, mowtime_hour, start2_min, mowtime_min);
+    start1 = formatDigits(*start1_hour) + ":" + formatDigits(*start1_min);
+    end1 = calcTime(*start1_hour, *mowtime_hour, *start1_min, *mowtime_min);
+    start2 = formatDigits(*start2_hour) + ":" + formatDigits(*start2_min);
+    end2 = calcTime(*start2_hour, *mowtime_hour, *start2_min, *mowtime_min);
     request->send(200, "text/text", inputMessage);
   });
   server.on("/start", HTTP_GET, [](AsyncWebServerRequest *request){
