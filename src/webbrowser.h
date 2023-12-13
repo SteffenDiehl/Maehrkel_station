@@ -338,7 +338,7 @@ void setup_webbrowser(
   server.on("/startnow", HTTP_GET, [](AsyncWebServerRequest *request){
     *web_now_hour = *web_hour;
     *web_now_min = *web_min;
-    //*web_timer_now
+    *web_timer_now = 1;
     *web_status = 0;
   });
   server.on("/Date", HTTP_GET, [](AsyncWebServerRequest *request){

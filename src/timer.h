@@ -73,11 +73,11 @@ void check_timer()
     else{
         *timer_timer2 = 0;
     }
-    if (*timer_now_hour <= *timer_hour && *timer_now_min <= *timer_min && *timer_timer_now == 0 && (*timer_now_hour + *timer_mowtime_hour) <= *timer_hour && (*timer_now_min + *timer_mowtime_min) <= *timer_min)
-    {
-        *timer_timer_now = 1;
-    }
-    else{
-        *timer_timer_now = 0;
-    }
+    // if (*timer_now_hour <= *timer_hour && *timer_now_min <= *timer_min && *timer_timer_now == 0 && (*timer_now_hour + *timer_mowtime_hour) <= *timer_hour && (*timer_now_min + *timer_mowtime_min) <= *timer_min)
+    // {
+    //     *timer_timer_now = 1;
+    // }
+    // else{
+    //     *timer_timer_now = 0;
+    // }
 }
