@@ -8,6 +8,7 @@
 #include <weather.h>
 #include <time_date.h>
 #include <timer.h>
+#include <light.h>
 
 int current_hour = 0;
 int current_min = 0;
@@ -60,6 +61,7 @@ void setup(){
         &current_start1_hour, &current_start1_min, &current_timer1,
         &current_start2_hour, &current_start2_min, &current_timer2);
     setup_display();
+    setup_Light();
 }
 void loop(){
     main_Date = String(current_day) + ":" + String(current_month) + ":" + String(current_year);
@@ -67,6 +69,7 @@ void loop(){
     get_time_date(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year);
     check_timer();
     set_date_time();
+    set_Light(status);
     display_output(main_Date, main_Time, status);
     delay(500);
 }
