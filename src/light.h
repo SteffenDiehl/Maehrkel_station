@@ -1,24 +1,32 @@
 #include <Arduino.h>
 
-const int LightPin = 5;
+const int LightPinR = 5;
+const int LightPinG = 5;
+const int LightPinB = 5;
 
 void setup_Light() {
-    pinMode(LightPin, OUTPUT);
+    pinMode(LightPinR, OUTPUT);
+    pinMode(LightPinG, OUTPUT);
+    pinMode(LightPinB, OUTPUT);
 }
 
 void set_Light(int cStatus) {
     if (cStatus == 0)
     {
-        /* code */
+        digitalWrite(LightPinR, HIGH);
+        digitalWrite(LightPinG, LOW);
+        digitalWrite(LightPinB, LOW);
     }
     else if (cStatus == 1)
     {
-        /* code */
+        digitalWrite(LightPinR, HIGH);
+        digitalWrite(LightPinG, HIGH);
+        digitalWrite(LightPinB, LOW);
     }
     else if (cStatus == 2)
     {
-        /* code */
+        digitalWrite(LightPinR, LOW);
+        digitalWrite(LightPinG, HIGH);
+        digitalWrite(LightPinB, LOW);
     }
-    digitalWrite(LightPin, HIGH);
-    digitalWrite(LightPin, LOW);
 }
