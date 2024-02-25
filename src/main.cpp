@@ -62,6 +62,7 @@ void setup(){
         &current_start2_hour, &current_start2_min, &current_timer2);
     setup_display();
     setup_Light();
+    setup_Sensor();
 }
 void loop(){
     main_Date = String(current_day) + ":" + String(current_month) + ":" + String(current_year);
@@ -71,5 +72,6 @@ void loop(){
     set_date_time();
     set_Light(status);
     display_output(main_Date, main_Time, status);
+    check_Sensor();
     delay(500);
 }

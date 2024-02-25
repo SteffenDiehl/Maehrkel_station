@@ -31,6 +31,7 @@ GPIO-19 Display     TFT_MISO
 GPIO-21 Display     TFT_DC
 GPIO-22 Display     TFT_CS
 GPIO-23 Display     TFT_MOSI
+GPIO-24
 GPIO-25 Light       LightPin
 GPIO-26
 GPIO-27
