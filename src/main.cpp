@@ -39,6 +39,10 @@ int status = 2;
 String main_Date = "";
 String main_Time = "";
 
+int time_weather =0;
+float Humidity = 0;
+float Temperature = 0;
+
 void setup(){
     Serial.begin(115200);
     setup_webbrowser(
@@ -62,7 +66,7 @@ void setup(){
         &current_start2_hour, &current_start2_min, &current_timer2);
     setup_display();
     setup_Light();
-    setup_DHT22();
+    setup_DHT11();
     //setup_Sensor();
 }
 void loop(){
@@ -73,7 +77,10 @@ void loop(){
     set_date_time();
     set_Light(status);
     display_output(main_Date, main_Time, status);
-    get_weather();
+    if(current_sec > (time_weather + 10)){
+        get_weather(&Humidity, &Temperature);
+        time_weather = current_sec;
+    }
     //check_Sensor();
-    delay(500);
+    delay(200);
 }
