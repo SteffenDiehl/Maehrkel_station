@@ -28,15 +28,13 @@ void setup_display()
     display.println(" Date:");
     display.println(" Time:");
     display.println(" Status:");
-    display.println(" Humidity:");
-    display.println(" Temperature:");
+    display.println(" Humid:");
+    display.println(" Temp:");
     display.setCursor(108, 50);
-    display.println(WiFi.localIP());
+    display.println("192.168.178.26");// Die gewünschte IP-Adresse //IP-Smartphone 192.168.43.68 // IP-Fritzbox 192.168.178.26
 }
-void display_output(String cDate, String cTime, int cStatus){
-    int cHumidity = 0;
-    int cTemp = 0;
-    display.fillRect(100, 65, 220, 50, GREEN);
+void display_output(String cDate, String cTime, int cStatus, float cHumidity, float cTemp){
+    display.fillRect(100, 65, 220, 100, GREEN);
     display.setCursor(108, 66);
     display.println(cDate);
     display.setCursor(108, 82);

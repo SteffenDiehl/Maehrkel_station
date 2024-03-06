@@ -39,7 +39,7 @@ int status = 2;
 String main_Date = "";
 String main_Time = "";
 
-int time_weather =0;
+int time_weather = 0;
 float Humidity = 0;
 float Temperature = 0;
 
@@ -53,7 +53,8 @@ void setup(){
         &current_now_hour, &current_now_min, &current_now_timer_hour, &current_now_timer_min,
         &current_timer_now,
         &current_start1_hour, &current_start1_min, &current_timer1,
-        &current_start2_hour, &current_start2_min, &current_timer2);
+        &current_start2_hour, &current_start2_min, &current_timer2,
+        &Humidity, &Temperature);
 
     setup_timer(
         &current_hour, &current_min, &current_sec,
@@ -66,7 +67,7 @@ void setup(){
         &current_start2_hour, &current_start2_min, &current_timer2);
     setup_display();
     setup_Light();
-    setup_DHT11();
+    setup_DHT22();
     //setup_Sensor();
 }
 void loop(){
@@ -76,7 +77,7 @@ void loop(){
     check_timer();
     set_date_time();
     set_Light(status);
-    display_output(main_Date, main_Time, status);
+    display_output(main_Date, main_Time, status, Humidity, Temperature);
     if(current_sec > (time_weather + 10)){
         get_weather(&Humidity, &Temperature);
         time_weather = current_sec;

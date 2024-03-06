@@ -8,19 +8,19 @@
 
 #include <DHT.h>
 #define DHT_SENSOR_PIN  4 // ESP32 pin GPIO21 connected to DHT11 sensor
-#define DHT_SENSOR_TYPE DHT11
+#define DHT_SENSOR_TYPE DHT22
 
 DHT dht_sensor(DHT_SENSOR_PIN, DHT_SENSOR_TYPE);
 
-void setup_DHT11() {
+void setup_DHT22() {
     dht_sensor.begin(); // initialize the DHT sensor
 }
 
 void get_weather(float *humi, float *temp) {
     // read humidity
-    float humi  = dht_sensor.readHumidity();
+    *humi  = dht_sensor.readHumidity();
     // read temperature in Celsius
-    float temp = dht_sensor.readTemperature();
+    *temp = dht_sensor.readTemperature();
     // read temperature in Fahrenheit
     //float tempF = dht_sensor.readTemperature(true);
 
@@ -36,7 +36,7 @@ void get_weather(float *humi, float *temp) {
 
     Serial.print("Temperature: ");
     Serial.print(*temp);
-    Serial.print("°C  ~  ");
+    Serial.println("°C");
     //Serial.print(*tempF);
     //Serial.println("°F");
     }

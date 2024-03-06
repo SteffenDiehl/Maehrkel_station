@@ -12,11 +12,11 @@
 #include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);
-const char* ssid = "DiehlWithIt";     //"JustDiehlWithIt";
-const char* password = "DiehlWithIt"; //"DiehlWithIt09";
+const char* ssid = "JustDiehlWithIt";     //"JustDiehlWithIt";
+const char* password = "DiehlWithIt09"; //"DiehlWithIt09";
 
-IPAddress staticIP(192, 168, 43, 68); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 27
-IPAddress gateway(192, 168, 43, 1);    // Das Gateway
+IPAddress staticIP(192, 168, 178, 26); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 26
+IPAddress gateway(192, 168, 178, 1);    // Das Gateway
 IPAddress subnet(255, 255, 255, 0);   // Die Subnetzmaske
 IPAddress dns(8, 8, 8, 8);
 
@@ -63,8 +63,8 @@ int *web_hour = nullptr;
 int *web_min = nullptr;
 int *web_sec = nullptr;
 
-float *Humidity = nullptr;
-float *Temperature = nullptr;
+float *web_Humidity = nullptr;
+float *web_Temperature = nullptr;
 
 int *web_status = nullptr;
 String web_status_color[3] = {"DarkGreen", "DarkOrange", "FireBrick"};
@@ -95,6 +95,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       setTimeout(function(){ document.location.reload(false); }, 500);   
     }
     </script>
+<meta charset="UTF-8">
 <html><body style="background-color: lightgreen;">
   <head>
     <meta http-equiv="refresh" content="60">
@@ -114,7 +115,7 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h1>Maehrkel<small><small><small> by Daniel Becher, Benedikt Buettner, Steffen Diehl </small></small></small></h1>
       <h2>Date: %currentDate%</h2>
       <h2>Time: %currentTime%</h2>
-      <h2>Humidity: %currentHumidity% %</h2>
+      <h2>Humidity: %currentHumidity% &#37;</h2>
       <h2>Temperature: %currentTemperature% °C</h2>
   <p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
     </form>
@@ -252,12 +253,14 @@ String processor(const String& var){
       return end2;
   }
   else if(var== "currentHumidity") {
-      return String(*Humidity);
+      return String(*web_Humidity);
   }
   else if(var== "currentTemperature") {
-      return String(*Temperature);
+      return String(*web_Temperature);
   }
-  return String();
+  else{
+      return String();
+  }
 }
 String formatDigits(int number) {
   if (number < 10) {
@@ -316,8 +319,8 @@ void setup_webbrowser(
   web_timer1 = c_timer1;
   web_timer2 = c_timer2;
 
-  Humidity = c_humidity;
-  Temperature = c_temperatur
+  web_Humidity = c_humidity;
+  web_Temperature = c_temperatur;
   
   // Initialize SPIFFS
   #ifdef ESP32
