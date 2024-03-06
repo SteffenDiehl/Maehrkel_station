@@ -12,11 +12,11 @@
 #include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);
-const char* ssid = "JustDiehlWithIt"; //DiehlWithIt
-const char* password = "DiehlWithIt09"; //DiehlWithIt
+const char* ssid = "DiehlWithIt";     //"JustDiehlWithIt";
+const char* password = "DiehlWithIt"; //"DiehlWithIt09";
 
-IPAddress staticIP(192, 168, 178, 27); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 27
-IPAddress gateway(192, 168, 178, 1);    // Das Gateway
+IPAddress staticIP(192, 168, 43, 68); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 27
+IPAddress gateway(192, 168, 43, 1);    // Das Gateway
 IPAddress subnet(255, 255, 255, 0);   // Die Subnetzmaske
 IPAddress dns(8, 8, 8, 8);
 
@@ -62,6 +62,9 @@ const char* ptr_Time = Time.c_str();
 int *web_hour = nullptr;
 int *web_min = nullptr;
 int *web_sec = nullptr;
+
+float *Humidity = nullptr;
+float *Temperature = nullptr;
 
 int *web_status = nullptr;
 String web_status_color[3] = {"DarkGreen", "DarkOrange", "FireBrick"};
@@ -111,6 +114,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h1>Maehrkel<small><small><small> by Daniel Becher, Benedikt Buettner, Steffen Diehl </small></small></small></h1>
       <h2>Date: %currentDate%</h2>
       <h2>Time: %currentTime%</h2>
+      <h2>Humidity: %currentHumidity% %</h2>
+      <h2>Temperature: %currentTemperature% °C</h2>
   <p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
     </form>
     <br>
@@ -246,6 +251,12 @@ String processor(const String& var){
   else if(var== "end_timer2") {
       return end2;
   }
+  else if(var== "currentHumidity") {
+      return String(*Humidity);
+  }
+  else if(var== "currentTemperature") {
+      return String(*Temperature);
+  }
   return String();
 }
 String formatDigits(int number) {
@@ -279,7 +290,8 @@ void setup_webbrowser(
     int *c_now_h, int *c_now_m, int *c_now_timer_h, int *c_now_timer_m,
     int *c_timer_now,
     int *c_start1_h, int *c_start1_m, int *c_timer1,
-    int *c_start2_h, int *c_start2_m, int *c_timer2) {
+    int *c_start2_h, int *c_start2_m, int *c_timer2,
+    float *c_humidity, float *c_temperatur) {
 
   web_hour = c_hour;
   web_min = c_min;
@@ -303,6 +315,9 @@ void setup_webbrowser(
   start2_min = c_start2_m;
   web_timer1 = c_timer1;
   web_timer2 = c_timer2;
+
+  Humidity = c_humidity;
+  Temperature = c_temperatur
   
   // Initialize SPIFFS
   #ifdef ESP32
