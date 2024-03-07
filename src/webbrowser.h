@@ -374,6 +374,13 @@ void setup_webbrowser(
   server.on("/Temperature", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", (String(*web_Temperature)).c_str());
   });
+  server.on("/emergency", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_status = 2;
+    request->send_P(200, "text/plain", "stop");
+  });
+  server.on("/no-emergency", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", "ok");
+  });
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
     unsigned long changetimer;
     String inputMessage;
