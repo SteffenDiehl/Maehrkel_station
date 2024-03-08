@@ -27,19 +27,20 @@ void get_weather(float *humi, float *temp) {
     // check whether the reading is successful or not
     if ( isnan(*temp) || isnan(*humi)) {
     Serial.println("Failed to read from DHT sensor!");
-    } else {
-    Serial.print("Humidity: ");
-    Serial.print(*humi);
-    Serial.print("%");
-
-    Serial.print("  |  ");
-
-    Serial.print("Temperature: ");
-    Serial.print(*temp);
-    Serial.println("°C");
-    //Serial.print(*tempF);
-    //Serial.println("°F");
     }
+    // else {
+    // Serial.print("Humidity: ");
+    // Serial.print(*humi);
+    // Serial.print("%");
+
+    // Serial.print("  |  ");
+
+    // Serial.print("Temperature: ");
+    // Serial.print(*temp);
+    // Serial.println("°C");
+    // //Serial.print(*tempF);
+    // //Serial.println("°F");
+    // }
     // wait a 2 seconds between readings
 }
 

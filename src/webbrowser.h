@@ -117,7 +117,6 @@ const char index_html[] PROGMEM = R"rawliteral(
       <h2>Time: %currentTime%</h2>
       <h2>Humidity: %currentHumidity% &#37;</h2>
       <h2>Temperature: %currentTemperature% °C</h2>
-  <p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
     </form>
     <br>
     <form action="/stopnow" target="hidden-form">
@@ -194,6 +193,9 @@ const char index_html[] PROGMEM = R"rawliteral(
   // </form>
 
 //&nbsp; &nbsp; &nbsp;
+
+
+  //<p><img src="https://www.bundeskanzler.de/resource/image/1860510/16x9/1023/575/1f8092e18cf8a8a122753b918d3e7016/aH/bundeskanzlerin-angela-merkel-portraet-2.jpg" alt="Smiley face" style="float:right;width:800px;height:450px;"></p>
 
 // Replaces placeholder with stored values
 void notFound(AsyncWebServerRequest *request) {
@@ -468,6 +470,6 @@ void set_date_time() {
   String d = formatDigits(*web_day);
   String m = formatDigits(*web_month);
   Date = d + "." + m + "." + String(*web_year);
-  Time = formatDigits(*web_hour) + ":" + formatDigits(*web_min) + ":" + formatDigits(*web_sec);
+  Time = formatDigits(*web_hour) + ":" + formatDigits(*web_min);// + ":" + formatDigits(*web_sec)
 // Function to format a number as a two-digit string
 } 
