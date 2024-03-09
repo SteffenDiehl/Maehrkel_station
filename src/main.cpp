@@ -18,19 +18,19 @@ int current_year = 0;
 int current_now_hour = 0;
 int current_now_min = 0;
 int current_now_timer_hour = 0;
-int current_now_timer_min = 0;
-int current_timer_now = 0; //0 = stop, 1 = running
+int current_now_timer_min = 30;
+bool current_timer_now = false; //false = stop, true = running
 
-int current_start1_hour = 0;
-int current_start1_min = 0;
-int current_timer1 = 0; //0 = stop, 1 = running
+int current_start1_hour = 12;
+int current_start1_min = 30;
+bool current_timer1 = false; //false = stop, true = running
 
-int current_start2_hour = 0;
+int current_start2_hour = 16;
 int current_start2_min = 0;
-int current_timer2 = 0; //0 = stop, 1 = running
+bool current_timer2 = false; //false = stop, true = running
 
-int current_mowtime_hour = 1;
-int current_mowtime_min = 30;
+int current_mowtime_hour = 0;
+int current_mowtime_min = 3; //set higher
 
 int status = 2;
 
@@ -40,6 +40,7 @@ String main_Time = "";
 int time_weather = 0;
 float Humidity = 0;
 float Temperature = 0;
+bool emergency = false;
 
 void setup(){
     Serial.begin(115200);
@@ -52,7 +53,7 @@ void setup(){
         &current_timer_now,
         &current_start1_hour, &current_start1_min, &current_timer1,
         &current_start2_hour, &current_start2_min, &current_timer2,
-        &Humidity, &Temperature);
+        &Humidity, &Temperature, &emergency);
 
     setup_timer(
         &current_hour, &current_min, &current_sec,
@@ -62,7 +63,8 @@ void setup(){
         &current_now_hour, &current_now_min, &current_now_timer_hour, &current_now_timer_min,
         &current_timer_now,
         &current_start1_hour, &current_start1_min, &current_timer1,
-        &current_start2_hour, &current_start2_min, &current_timer2);
+        &current_start2_hour, &current_start2_min, &current_timer2,
+        &emergency);
     setup_display();
     setup_Light();
     setup_DHT22();
@@ -80,6 +82,5 @@ void loop(){
         get_weather(&Humidity, &Temperature);
         time_weather = current_sec;
     }
-    //check_Sensor();
     delay(200);
 }

@@ -26,7 +26,7 @@ int *web_now_timer_min = nullptr;
 const char* left_now_timer = "left_now_timer";
 int *web_now_hour = nullptr;
 int *web_now_min = nullptr;
-int *web_timer_now = nullptr;
+bool *web_timer_now = nullptr;
 
 const char* start_timer1_hour = "start_timer1_hour";
 int *start1_hour = nullptr;
@@ -35,7 +35,7 @@ int *start1_min = nullptr;
 const char* start_timer1 = "start_timer1";
 String start1 = "0";
 String end1 = "0";
-int *web_timer1 = nullptr;
+bool *web_timer1 = nullptr;
 
 const char* start_timer2_hour = "start_timer2_hour";
 int *start2_hour = nullptr;
@@ -44,7 +44,7 @@ int *start2_min = nullptr;
 const char* start_timer2 = "start_timer2";
 String start2 = "0";
 String end2 = "0";
-int *web_timer2 = nullptr;
+bool *web_timer2 = nullptr;
 
 int *mowtime_hour = nullptr;
 int *mowtime_min = nullptr;
@@ -65,6 +65,7 @@ int *web_sec = nullptr;
 
 float *web_Humidity = nullptr;
 float *web_Temperature = nullptr;
+bool *web_emergency;
 
 int *web_status = nullptr;
 String web_status_color[3] = {"DarkGreen", "DarkOrange", "FireBrick"};
@@ -145,7 +146,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     </form>
     <form action="/get" target="hidden-form">
     <br>
-      min (current value %StartNow% min): <input type="text" name="start_now_timer">
+      set Time (current value %StartNow%): <input type="text" name="start_now_timer" min>
       <br>
       <br>
       <strong>Timer 1</strong>
@@ -227,7 +228,7 @@ String processor(const String& var){
   }
   else if(var== "left_now_timer") {
     String ret_str;
-    if (*web_timer_now == 1)
+    if (*web_timer_now)
     {
       ret_str = String(*web_now_timer_hour + *web_now_hour - *web_hour) + "h : " + String(*web_now_timer_min + *web_now_min - *web_min) + "min";
     }
@@ -293,10 +294,10 @@ void setup_webbrowser(
     int *c_status,
     int *c_mow_h, int *c_mow_m,
     int *c_now_h, int *c_now_m, int *c_now_timer_h, int *c_now_timer_m,
-    int *c_timer_now,
-    int *c_start1_h, int *c_start1_m, int *c_timer1,
-    int *c_start2_h, int *c_start2_m, int *c_timer2,
-    float *c_humidity, float *c_temperatur) {
+    bool *c_timer_now,
+    int *c_start1_h, int *c_start1_m, bool *c_timer1,
+    int *c_start2_h, int *c_start2_m, bool *c_timer2,
+    float *c_humidity, float *c_temperatur, bool *c_emergency) {
 
   web_hour = c_hour;
   web_min = c_min;
@@ -323,6 +324,7 @@ void setup_webbrowser(
 
   web_Humidity = c_humidity;
   web_Temperature = c_temperatur;
+  web_emergency = c_emergency;
   
   // Initialize SPIFFS
   #ifdef ESP32
@@ -358,7 +360,7 @@ void setup_webbrowser(
   server.on("/startnow", HTTP_GET, [](AsyncWebServerRequest *request){
     *web_now_hour = *web_hour;
     *web_now_min = *web_min;
-    *web_timer_now = 1;
+    *web_timer_now = true;
     *web_status = 0;
   });
   server.on("/Date", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -378,9 +380,11 @@ void setup_webbrowser(
   });
   server.on("/emergency", HTTP_GET, [](AsyncWebServerRequest *request){
     *web_status = 2;
+    *web_emergency = true;
     request->send_P(200, "text/plain", "stop");
   });
   server.on("/no-emergency", HTTP_GET, [](AsyncWebServerRequest *request){
+    *web_emergency = false;
     request->send_P(200, "text/plain", "ok");
   });
   server.on("/get", HTTP_GET, [] (AsyncWebServerRequest *request) {
@@ -392,8 +396,13 @@ void setup_webbrowser(
         changetimer = (inputMessage.toInt());
         if (changetimer > 90)
         {
+          *web_now_timer_hour = 1;
+          *web_now_timer_min = 30;
+        }
+        else if (changetimer < 30)
+        {
           *web_now_timer_hour = 0;
-          *web_now_timer_min = 0;
+          *web_now_timer_min = 30;
         }
         else if (changetimer < 60)
         {
