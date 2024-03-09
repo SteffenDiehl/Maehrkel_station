@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
-const int LightPinR = 5;
-const int LightPinG = 5;
-const int LightPinB = 5;
+const int LightPinR = 25;
+const int LightPinG = 26;
+const int LightPinB = 27;
 
 void setup_Light() {
     pinMode(LightPinR, OUTPUT);
