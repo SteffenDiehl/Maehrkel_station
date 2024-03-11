@@ -12,11 +12,11 @@
 #include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);
-const char* ssid = "JustDiehlWithIt";     //"JustDiehlWithIt";
-const char* password = "DiehlWithIt09"; //"DiehlWithIt09";
+const char* ssid = "DiehlWithIt";     //"JustDiehlWithIt";
+const char* password = "DiehlWithIt"; //"DiehlWithIt09";
 
-IPAddress staticIP(192, 168, 178, 26); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 26
-IPAddress gateway(192, 168, 178, 1);    // Das Gateway
+IPAddress staticIP(192, 168, 43, 55); // Die gewünschte IP-Adresse //IP-Smartphone 192, 168, 43, 68 // IP-Fritzbox 192, 168, 178, 26
+IPAddress gateway(192, 168, 43, 1);    // Das Gateway
 IPAddress subnet(255, 255, 255, 0);   // Die Subnetzmaske
 IPAddress dns(8, 8, 8, 8);
 
