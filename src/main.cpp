@@ -73,11 +73,11 @@ void setup(){
 void loop(){
     main_Date = String(current_day) + ":" + String(current_month) + ":" + String(current_year);
     main_Time = formatDigits(current_hour) + ":" + formatDigits(current_min); // + ":" + formatDigits(current_sec)
-    get_time_date(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year);
+    //get_time_date(&current_hour, &current_min, &current_sec, &current_day, &current_month, &current_year);
     check_timer();
     set_date_time();
     set_Light(status);
-    display_output(main_Date, main_Time, status, Humidity, Temperature);
+    //display_output(main_Date, main_Time, status, Humidity, Temperature);
     if(current_sec > (time_weather + 10)){
         get_weather(&Humidity, &Temperature);
         time_weather = current_sec;

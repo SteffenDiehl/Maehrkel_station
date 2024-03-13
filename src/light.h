@@ -13,8 +13,8 @@ void setup_Light() {
 void set_Light(int cStatus) {
     if (cStatus == 0)
     {
-        digitalWrite(LightPinR, HIGH);
-        digitalWrite(LightPinG, LOW);
+        digitalWrite(LightPinR, LOW);
+        digitalWrite(LightPinG, HIGH);
         digitalWrite(LightPinB, LOW);
     }
     else if (cStatus == 1)
@@ -25,8 +25,8 @@ void set_Light(int cStatus) {
     }
     else if (cStatus == 2)
     {
-        digitalWrite(LightPinR, LOW);
-        digitalWrite(LightPinG, HIGH);
+        digitalWrite(LightPinR, HIGH);
+        digitalWrite(LightPinG, LOW);
         digitalWrite(LightPinB, LOW);
     }
 }
